@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">My Portfolio</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add">Add</string>
+    <string name="placeholder_text">placeholder</string>
+    <string name="placeholder_double">123.45</string>
+</resources>
