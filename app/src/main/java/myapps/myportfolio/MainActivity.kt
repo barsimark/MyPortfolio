@@ -14,7 +14,7 @@ import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
 import myapps.myportfolio.fragments.AssetsFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AdditemFragment.AssetHandler {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,10 +24,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
         binding.floatingActionButton.setOnClickListener {
-            val share = Share("A", 1.0, 15.0)
-            DataManager.shares.add(share)
-            (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
             AdditemFragment().show(supportFragmentManager, "ADD_TAG")
         }
+    }
+
+    override fun shareCreated(share: Share) {
+        DataManager.shares.add(share)
+        (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
     }
 }
