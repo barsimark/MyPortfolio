@@ -8,4 +8,5 @@
     <string name="name">Name</string>
     <string name="number">Number</string>
     <string name="value">Value</string>
+    <string name="price">Price</string>
 </resources>

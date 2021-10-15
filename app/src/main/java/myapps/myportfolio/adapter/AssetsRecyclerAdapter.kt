@@ -1,6 +1,7 @@
 package myapps.myportfolio.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import myapps.myportfolio.R
 import myapps.myportfolio.data.DataManager
 import myapps.myportfolio.data.Share
 import myapps.myportfolio.touch.AssetsTouchHelperAdapter
+import kotlin.math.round
 
 class AssetsRecyclerAdapter(private val context: Context) :
     RecyclerView.Adapter<AssetsRecyclerAdapter.ViewHolder>(), AssetsTouchHelperAdapter {
@@ -21,10 +23,10 @@ class AssetsRecyclerAdapter(private val context: Context) :
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvName = itemView.findViewById<TextView>(R.id.tvName)
-        val tvPrice = itemView.findViewById<TextView>(R.id.tvPrice)
-        val tvValue = itemView.findViewById<TextView>(R.id.tvValue)
-        val tvNumber = itemView.findViewById<TextView>(R.id.tvNumber)
+        var tvName = itemView.findViewById<TextView>(R.id.tvName)
+        var tvPrice = itemView.findViewById<TextView>(R.id.tvPrice)
+        var tvValue = itemView.findViewById<TextView>(R.id.tvValue)
+        var tvNumber = itemView.findViewById<TextView>(R.id.tvNumber)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,9 +39,9 @@ class AssetsRecyclerAdapter(private val context: Context) :
         val asset = assets[holder.adapterPosition]
 
         holder.tvName.text = asset.name
-        holder.tvPrice.text = asset.value.toString()
-        holder.tvValue.text = (asset.value * asset.number).toString()
-        holder.tvNumber.text = asset.number.toString()
+        holder.tvPrice.text = String.format("%.4f", asset.value)
+        holder.tvValue.text = String.format("%.4f", asset.value * asset.number)
+        holder.tvNumber.text = String.format("%.4f", asset.number)
     }
 
     override fun getItemCount(): Int {
@@ -53,6 +55,17 @@ class AssetsRecyclerAdapter(private val context: Context) :
     }
 
     override fun onItemDismissed(position: Int) {
-        (context as AssetDeleter).shareDeleted(assets[position])
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Delete item")
+        builder.setMessage("Are you sure?")
+        builder.setPositiveButton("Yes"){ dialog, which ->
+            (context as AssetDeleter).shareDeleted(assets[position])
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("No"){ dialog, which ->
+            refresh()
+            dialog.dismiss()
+        }
+        builder.show()
     }
 }
