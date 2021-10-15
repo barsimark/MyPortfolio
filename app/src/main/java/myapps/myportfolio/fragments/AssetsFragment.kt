@@ -28,7 +28,7 @@ class AssetsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.rvAssets.adapter = adapter
-        val callback = AssetsTouchHelperCallback(adapter)
+        val callback = AssetsTouchHelperCallback(adapter, requireContext())
         val touchHelper = ItemTouchHelper(callback)
         touchHelper.attachToRecyclerView(binding.rvAssets)
 
