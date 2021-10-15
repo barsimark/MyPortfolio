@@ -1,18 +1,13 @@
 package myapps.myportfolio
 
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.Toast
-import com.baoyz.widget.PullRefreshLayout
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
 import myapps.myportfolio.adapter.SummaryPagerAdapter
 import myapps.myportfolio.data.DataManager
 import myapps.myportfolio.data.Share
 import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
-import myapps.myportfolio.fragments.AssetsFragment
 
 class MainActivity : AppCompatActivity(),
     AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
@@ -23,6 +18,7 @@ class MainActivity : AppCompatActivity(),
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
         binding.floatingActionButton.setOnClickListener {
             AdditemFragment().show(supportFragmentManager, "ADD_TAG")

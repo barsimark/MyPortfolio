@@ -22,4 +22,10 @@ class SummaryPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVI
     override fun getItemPosition(`object`: Any): Int {
         return POSITION_NONE
     }
+
+    override fun getPageTitle(position: Int): CharSequence? = when(position) {
+        0 -> "Summary"
+        1 -> "Assets"
+        else -> "Unknown"
+    }
 }
