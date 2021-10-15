@@ -14,7 +14,8 @@ import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
 import myapps.myportfolio.fragments.AssetsFragment
 
-class MainActivity : AppCompatActivity(), AdditemFragment.AssetHandler {
+class MainActivity : AppCompatActivity(),
+    AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity(), AdditemFragment.AssetHandler {
 
     override fun shareCreated(share: Share) {
         DataManager.shares.add(share)
+        (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+    }
+
+    override fun shareDeleted(share: Share) {
+        DataManager.shares.remove(share)
         (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
     }
 }

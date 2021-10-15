@@ -10,15 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import myapps.myportfolio.R
 import myapps.myportfolio.data.DataManager
 import myapps.myportfolio.data.Share
+import myapps.myportfolio.touch.AssetsTouchHelperAdapter
 
 class AssetsRecyclerAdapter(private val context: Context) :
-    RecyclerView.Adapter<AssetsRecyclerAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AssetsRecyclerAdapter.ViewHolder>(), AssetsTouchHelperAdapter {
     private var assets = mutableListOf<Share>()
+
+    interface AssetDeleter{
+        fun shareDeleted(share: Share)
+    }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvName = itemView.findViewById<TextView>(R.id.tvName)
         val tvPrice = itemView.findViewById<TextView>(R.id.tvPrice)
         val tvValue = itemView.findViewById<TextView>(R.id.tvValue)
+        val tvNumber = itemView.findViewById<TextView>(R.id.tvNumber)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,6 +39,7 @@ class AssetsRecyclerAdapter(private val context: Context) :
         holder.tvName.text = asset.name
         holder.tvPrice.text = asset.value.toString()
         holder.tvValue.text = (asset.value * asset.number).toString()
+        holder.tvNumber.text = asset.number.toString()
     }
 
     override fun getItemCount(): Int {
@@ -43,5 +50,9 @@ class AssetsRecyclerAdapter(private val context: Context) :
     fun refresh(){
         assets = DataManager.shares
         notifyDataSetChanged()
+    }
+
+    override fun onItemDismissed(position: Int) {
+        (context as AssetDeleter).shareDeleted(assets[position])
     }
 }

@@ -35,7 +35,7 @@ class AdditemFragment : DialogFragment() {
 
         initDialogContent(builder)
 
-        builder.setPositiveButton("Add Asset") { dialog, which ->
+        builder.setPositiveButton("Add Asset") { _, _ ->
             // keep it empty
         }
         return builder.create()
@@ -75,7 +75,6 @@ class AdditemFragment : DialogFragment() {
                     etNumber.error = "This field cannot be empty"
                 if (etValue.text.isEmpty())
                     etValue.error = "This field cannot be empty"
-                Toast.makeText(context, "here", Toast.LENGTH_SHORT).show()
             }
         }
     }

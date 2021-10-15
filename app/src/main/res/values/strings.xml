@@ -5,4 +5,7 @@
     <string name="add">Add</string>
     <string name="placeholder_text">placeholder</string>
     <string name="placeholder_double">123.45</string>
+    <string name="name">Name</string>
+    <string name="number">Number</string>
+    <string name="value">Value</string>
 </resources>

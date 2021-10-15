@@ -31,7 +31,7 @@ class SummaryFragment : Fragment() {
         for (element in DataManager.shares){
             entries.add(PieEntry((element.number * element.value).toFloat(), element.name))
         }
-        val dataset = PieDataSet(entries, "")
+        val dataset = PieDataSet(entries, " ")
         dataset.colors = ColorTemplate.MATERIAL_COLORS.toList()
         val data = PieData(dataset)
         binding.chartSummary.data = data
