@@ -61,6 +61,7 @@ class AdditemFragment : DialogFragment() {
                     etValue.text.isNotEmpty()){
                 assetHandler.shareCreated(
                     Share(
+                        null,
                         etName.text.toString(),
                         etNumber.text.toString().toDouble(),
                         etValue.text.toString().toDouble()

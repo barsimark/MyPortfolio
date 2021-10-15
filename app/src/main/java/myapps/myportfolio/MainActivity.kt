@@ -6,6 +6,7 @@ import myapps.myportfolio.adapter.AssetsRecyclerAdapter
 import myapps.myportfolio.adapter.SummaryPagerAdapter
 import myapps.myportfolio.data.DataManager
 import myapps.myportfolio.data.Share
+import myapps.myportfolio.database.MyDatabase
 import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity(),
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        loadDataFromDatabase()
+
         binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
         binding.floatingActionButton.setOnClickListener {
@@ -25,13 +28,34 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun loadDataFromDatabase(){
+        Thread{
+            val items = MyDatabase.getInstance(this).assetDao().getAllShares()
+            DataManager.shares = items.toMutableList()
+            runOnUiThread {
+                (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+            }
+        }.start()
+    }
+
     override fun shareCreated(share: Share) {
-        DataManager.shares.add(share)
-        (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+        Thread{
+            val id = MyDatabase.getInstance(this).assetDao().insertShare(share)
+            share.uid = id
+            DataManager.shares.add(share)
+            runOnUiThread {
+                (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+            }
+        }.start()
     }
 
     override fun shareDeleted(share: Share) {
-        DataManager.shares.remove(share)
-        (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+        Thread {
+            MyDatabase.getInstance(this).assetDao().deleteShare(share)
+            DataManager.shares.remove(share)
+            runOnUiThread {
+                (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+            }
+        }.start()
     }
 }
