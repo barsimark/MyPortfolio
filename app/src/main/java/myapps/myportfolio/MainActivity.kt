@@ -2,6 +2,9 @@ package myapps.myportfolio
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import com.opencsv.CSVReader
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
 import myapps.myportfolio.adapter.SummaryPagerAdapter
 import myapps.myportfolio.data.DataManager
@@ -9,23 +12,49 @@ import myapps.myportfolio.data.Share
 import myapps.myportfolio.database.MyDatabase
 import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity(),
     AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
     private lateinit var binding: ActivityMainBinding
+    var assetsStrings = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.floatingActionButton.hide()
 
         loadDataFromDatabase()
+        loadAssetsList()
 
         binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
         binding.floatingActionButton.setOnClickListener {
-            AdditemFragment().show(supportFragmentManager, "ADD_TAG")
+            AdditemFragment(assetsStrings).show(supportFragmentManager, "ADD_TAG")
         }
+    }
+
+    private fun loadAssetsList(){
+        Thread {
+            val inputStreamReader = InputStreamReader(assets.open("USE_20211014.csv"))
+            val bufferedReader = BufferedReader(inputStreamReader)
+            bufferedReader.readLine()
+
+            var str = bufferedReader.readLine()
+
+            while (str != null) {
+                assetsStrings.add(str.split(",").toTypedArray()[0])
+                str = bufferedReader.readLine()
+            }
+
+            runOnUiThread {
+                binding.floatingActionButton.show()
+            }
+        }.start()
     }
 
     private fun loadDataFromDatabase(){

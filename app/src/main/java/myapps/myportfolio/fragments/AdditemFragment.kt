@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -11,9 +13,9 @@ import myapps.myportfolio.R
 import myapps.myportfolio.data.Share
 import java.lang.RuntimeException
 
-class AdditemFragment : DialogFragment() {
+class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
     private lateinit var assetHandler: AssetHandler
-    private lateinit var etName: EditText
+    private lateinit var etName: AutoCompleteTextView
     private lateinit var etNumber: EditText
     private lateinit var etValue: EditText
 
@@ -43,9 +45,13 @@ class AdditemFragment : DialogFragment() {
 
     private fun initDialogContent(builder: AlertDialog.Builder) {
         val rootView = requireActivity().layoutInflater.inflate(R.layout.fragment_additem, null)
-        etName = rootView.findViewById(R.id.etAssetName) as EditText
+        etName = rootView.findViewById(R.id.etAssetName) as AutoCompleteTextView
         etNumber = rootView.findViewById(R.id.etAssetNumber) as EditText
         etValue = rootView.findViewById(R.id.etAssetValue) as EditText
+
+        etName.threshold = 1
+        etName.setAdapter(ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, assets))
+
         builder.setView(rootView)
     }
 
@@ -56,18 +62,20 @@ class AdditemFragment : DialogFragment() {
         val positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE)
 
         positiveButton.setOnClickListener {
-            if (etName.text.isNotEmpty() &&
-                    etNumber.text.isNotEmpty() &&
-                    etValue.text.isNotEmpty()){
-                assetHandler.shareCreated(
-                    Share(
-                        null,
-                        etName.text.toString(),
-                        etNumber.text.toString().toDouble(),
-                        etValue.text.toString().toDouble()
+            if (etName.text.isNotEmpty() && etNumber.text.isNotEmpty() && etValue.text.isNotEmpty()){
+                if (etName.text.toString() in assets) {
+                    assetHandler.shareCreated(
+                        Share(
+                            null,
+                            etName.text.toString(),
+                            etNumber.text.toString().toDouble(),
+                            etValue.text.toString().toDouble()
+                        )
                     )
-                )
-                dialog.dismiss()
+                    dialog.dismiss()
+                }
+                else
+                    etName.error = "Value must be from list below"
             }
             else {
                 if (etName.text.isEmpty())

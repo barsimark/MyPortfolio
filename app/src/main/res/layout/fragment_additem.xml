@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.AdditemFragment">
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etAssetName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
         android:id="@+id/etAssetNumber"
