@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_orientation="portrait"
-            app:label_text="Add stock"
+            app:label_text="Stock"
             app:fab_icon="@drawable/ic_stock"/>
 
     </com.nambimobile.widgets.efab.ExpandableFabLayout>

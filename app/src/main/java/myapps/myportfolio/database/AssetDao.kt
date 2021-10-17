@@ -1,9 +1,6 @@
 package myapps.myportfolio.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import myapps.myportfolio.data.Share
 
 @Dao
@@ -13,6 +10,9 @@ interface AssetDao {
 
     @Insert
     fun insertShare(share: Share): Long
+
+    @Update
+    fun updateShare(share: Share)
 
     @Delete
     fun deleteShare(share: Share)

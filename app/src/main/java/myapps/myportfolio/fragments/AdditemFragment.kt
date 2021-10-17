@@ -4,10 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import myapps.myportfolio.R
 import myapps.myportfolio.data.Share
@@ -17,10 +14,12 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
     private lateinit var assetHandler: AssetHandler
     private lateinit var etName: AutoCompleteTextView
     private lateinit var etNumber: EditText
-    private lateinit var etValue: EditText
+    private lateinit var etPrice: EditText
+    private lateinit var tgbtnBuySell: ToggleButton
 
     interface AssetHandler{
-        fun shareCreated(share: Share)
+        fun shareBought(share: Share)
+        fun shareSold(share: Share)
     }
 
     override fun onAttach(context: Context) {
@@ -33,13 +32,11 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("New Asset")
+        builder.setTitle("New Stock")
 
         initDialogContent(builder)
 
-        builder.setPositiveButton("Add Asset") { _, _ ->
-            // keep it empty
-        }
+        builder.setPositiveButton("Add Stock") { _, _ -> }
         return builder.create()
     }
 
@@ -47,7 +44,8 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
         val rootView = requireActivity().layoutInflater.inflate(R.layout.fragment_additem, null)
         etName = rootView.findViewById(R.id.etAssetName) as AutoCompleteTextView
         etNumber = rootView.findViewById(R.id.etAssetNumber) as EditText
-        etValue = rootView.findViewById(R.id.etAssetValue) as EditText
+        etPrice = rootView.findViewById(R.id.etAssetPrice) as EditText
+        tgbtnBuySell = rootView.findViewById(R.id.tgbtnBuySell) as ToggleButton
 
         etName.threshold = 1
         etName.setAdapter(ArrayAdapter(requireContext(), android.R.layout.select_dialog_item, assets))
@@ -62,17 +60,20 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
         val positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE)
 
         positiveButton.setOnClickListener {
-            if (etName.text.isNotEmpty() && etNumber.text.isNotEmpty() && etValue.text.isNotEmpty()){
+            if (etName.text.isNotEmpty() && etNumber.text.isNotEmpty() && etPrice.text.isNotEmpty()){
                 if (etName.text.toString() in assets) {
-                    assetHandler.shareCreated(
-                        Share(
-                            null,
-                            etName.text.toString(),
-                            etNumber.text.toString().toDouble(),
-                            etValue.text.toString().toDouble(),
-                            etValue.text.toString().toDouble()
-                        )
+                    val share = Share(
+                        null,
+                        etName.text.toString(),
+                        etNumber.text.toString().toDouble(),
+                        etPrice.text.toString().toDouble(),
+                        etPrice.text.toString().toDouble() * etNumber.text.toString()
+                            .toDouble()
                     )
+                    if (!tgbtnBuySell.isChecked)
+                        assetHandler.shareBought(share)
+                    else
+                        assetHandler.shareSold(share)
                     dialog.dismiss()
                 }
                 else
@@ -83,8 +84,8 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
                     etName.error = "This field cannot be empty"
                 if (etNumber.text.isEmpty())
                     etNumber.error = "This field cannot be empty"
-                if (etValue.text.isEmpty())
-                    etValue.error = "This field cannot be empty"
+                if (etPrice.text.isEmpty())
+                    etPrice.error = "This field cannot be empty"
             }
         }
     }

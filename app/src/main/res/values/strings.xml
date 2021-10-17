@@ -10,4 +10,6 @@
     <string name="value">Value</string>
     <string name="price">Price</string>
     <string name="free_cash">Free Cash</string>
+    <string name="buy">Buy</string>
+    <string name="sell">Sell</string>
 </resources>

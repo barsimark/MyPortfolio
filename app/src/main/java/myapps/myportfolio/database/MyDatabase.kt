@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import myapps.myportfolio.data.Share
 
-@Database(entities = [Share::class], version = 2)
+@Database(entities = [Share::class], version = 3)
 abstract class MyDatabase : RoomDatabase() {
     abstract fun assetDao(): AssetDao
 

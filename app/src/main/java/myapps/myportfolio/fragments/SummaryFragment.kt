@@ -23,19 +23,22 @@ class SummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var sum = 0.0
+        var sumCurrent = 0.0
+        var sumOriginal = 0.0
 
         val entries = mutableListOf<PieEntry>()
         for (element in DataManager.shares){
-            sum += element.number * element.value
-            entries.add(PieEntry((element.number * element.value).toFloat(), element.name))
+            sumCurrent += element.number * element.price
+            sumOriginal += element.buyValue
+            entries.add(PieEntry((element.number * element.price).toFloat(), element.name))
         }
         val dataset = PieDataSet(entries, " ")
         dataset.colors = ColorTemplate.MATERIAL_COLORS.toList()
         val data = PieData(dataset)
         binding.chartSummary.data = data
         binding.chartSummary.setTouchEnabled(false)
-        binding.tvTotalNetWorth.text = sum.toString()
+        binding.tvTotalNetWorth.text =
+            String.format("%.2f (%.2f%%)", sumCurrent, ((sumCurrent / sumOriginal) - 1.0) * 100.0)
 
         binding.chartSummary.invalidate()
     }

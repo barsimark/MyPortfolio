@@ -68,11 +68,31 @@ class MainActivity : AppCompatActivity(),
         }.start()
     }
 
-    override fun shareCreated(share: Share) {
+    override fun shareBought(share: Share) {
         Thread{
-            val id = MyDatabase.getInstance(this).assetDao().insertShare(share)
-            share.uid = id
-            DataManager.shares.add(share)
+            val res = DataManager.addShare(share)
+            if (res == null) {
+                val id = MyDatabase.getInstance(this).assetDao().insertShare(share)
+                share.uid = id
+            }
+            else {
+                MyDatabase.getInstance(this).assetDao().updateShare(res)
+            }
+            runOnUiThread {
+                (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+            }
+        }.start()
+    }
+
+    override fun shareSold(share: Share) {
+        Thread{
+            val res = DataManager.sellShare(share)
+            if (res != null) {
+                if (res.number > 0)
+                    MyDatabase.getInstance(this).assetDao().updateShare(res)
+                else
+                    shareDeleted(res)
+            }
             runOnUiThread {
                 (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
             }
