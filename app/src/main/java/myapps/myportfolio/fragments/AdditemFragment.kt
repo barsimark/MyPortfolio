@@ -69,6 +69,7 @@ class AdditemFragment(val assets: MutableList<String>) : DialogFragment() {
                             null,
                             etName.text.toString(),
                             etNumber.text.toString().toDouble(),
+                            etValue.text.toString().toDouble(),
                             etValue.text.toString().toDouble()
                         )
                     )

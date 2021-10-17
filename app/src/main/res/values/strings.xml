@@ -9,4 +9,5 @@
     <string name="number">Number</string>
     <string name="value">Value</string>
     <string name="price">Price</string>
+    <string name="free_cash">Free Cash</string>
 </resources>

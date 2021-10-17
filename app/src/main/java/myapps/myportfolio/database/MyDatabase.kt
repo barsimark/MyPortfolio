@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import myapps.myportfolio.data.Share
 
-@Database(entities = [Share::class], version = 1)
+@Database(entities = [Share::class], version = 2)
 abstract class MyDatabase : RoomDatabase() {
     abstract fun assetDao(): AssetDao
 
@@ -17,6 +17,7 @@ abstract class MyDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.applicationContext,
                     MyDatabase::class.java, "portfolio.db")
+                    .fallbackToDestructiveMigration()
                     .build()
             }
             return INSTANCE!!

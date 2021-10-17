@@ -12,7 +12,9 @@ data class Share (
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "number")
-    val number: Double,
+    var number: Double,
     @ColumnInfo(name = "value")
-    val value: Double
+    var value: Double,
+    @ColumnInfo(name = "buyprice")
+    var buyprice: Double
 ) : Serializable

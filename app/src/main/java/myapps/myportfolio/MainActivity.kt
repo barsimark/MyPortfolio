@@ -52,7 +52,6 @@ class MainActivity : AppCompatActivity(),
                 assetsStrings.add(str.split(",").toTypedArray()[0])
                 str = bufferedReader.readLine()
             }
-
             runOnUiThread {
                 binding.tabLayout.visibility = View.VISIBLE
             }

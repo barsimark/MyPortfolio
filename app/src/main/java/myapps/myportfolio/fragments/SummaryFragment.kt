@@ -1,14 +1,10 @@
 package myapps.myportfolio.fragments
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.baoyz.widget.PullRefreshLayout
 import myapps.myportfolio.databinding.FragmentSummaryBinding
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -27,8 +23,11 @@ class SummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var sum = 0.0
+
         val entries = mutableListOf<PieEntry>()
         for (element in DataManager.shares){
+            sum += element.number * element.value
             entries.add(PieEntry((element.number * element.value).toFloat(), element.name))
         }
         val dataset = PieDataSet(entries, " ")
@@ -36,6 +35,8 @@ class SummaryFragment : Fragment() {
         val data = PieData(dataset)
         binding.chartSummary.data = data
         binding.chartSummary.setTouchEnabled(false)
+        binding.tvTotalNetWorth.text = sum.toString()
+
         binding.chartSummary.invalidate()
     }
 }

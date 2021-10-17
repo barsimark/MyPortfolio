@@ -39,7 +39,7 @@ class AssetsRecyclerAdapter(private val context: Context) :
         val asset = assets[holder.adapterPosition]
 
         holder.tvName.text = asset.name
-        holder.tvPrice.text = String.format("%.4f", asset.value)
+        holder.tvPrice.text = String.format("%.4f (%.4f%%)", asset.value, (asset.value / asset.buyprice) - 1.0)
         holder.tvValue.text = String.format("%.4f", asset.value * asset.number)
         holder.tvNumber.text = String.format("%.4f", asset.number)
     }
