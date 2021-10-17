@@ -3,8 +3,10 @@ package myapps.myportfolio
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import com.opencsv.CSVReader
+import kotlinx.android.synthetic.main.activity_main.*
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
 import myapps.myportfolio.adapter.SummaryPagerAdapter
 import myapps.myportfolio.data.DataManager
@@ -26,14 +28,14 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.floatingActionButton.hide()
+        binding.tabLayout.visibility = View.GONE
 
         loadDataFromDatabase()
         loadAssetsList()
 
         binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
-        binding.floatingActionButton.setOnClickListener {
+        binding.fabAddAsset.setOnClickListener {
             AdditemFragment(assetsStrings).show(supportFragmentManager, "ADD_TAG")
         }
     }
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity(),
             }
 
             runOnUiThread {
-                binding.floatingActionButton.show()
+                binding.tabLayout.visibility = View.VISIBLE
             }
         }.start()
     }
