@@ -36,14 +36,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            app:efab_orientation="portrait"/>
+            app:efab_orientation="portrait"
+            app:efab_color="@color/purple_500"/>
         <com.nambimobile.widgets.efab.FabOption
             android:id="@+id/fabAddAsset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fab_orientation="portrait"
             app:label_text="Stock"
-            app:fab_icon="@drawable/ic_stock"/>
+            app:fab_icon="@drawable/ic_stock"
+            app:fab_color="@color/purple_500"/>
 
     </com.nambimobile.widgets.efab.ExpandableFabLayout>
 

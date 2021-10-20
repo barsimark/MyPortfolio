@@ -1,10 +1,12 @@
 package myapps.myportfolio
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.opencsv.CSVReader
 import kotlinx.android.synthetic.main.activity_main.*
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
@@ -14,10 +16,11 @@ import myapps.myportfolio.data.Share
 import myapps.myportfolio.database.MyDatabase
 import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.io.InputStreamReader
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.io.*
+import java.net.URL
+import java.util.jar.Manifest
 
 class MainActivity : AppCompatActivity(),
     AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
@@ -36,7 +39,8 @@ class MainActivity : AppCompatActivity(),
         binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
         binding.fabAddAsset.setOnClickListener {
-            AdditemFragment(assetsStrings).show(supportFragmentManager, "ADD_TAG")
+            //AdditemFragment(assetsStrings).show(supportFragmentManager, "ADD_TAG")
+            getStockInfo()
         }
     }
 
@@ -64,6 +68,28 @@ class MainActivity : AppCompatActivity(),
             DataManager.shares = items.toMutableList()
             runOnUiThread {
                 (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+            }
+        }.start()
+    }
+
+    private fun getStockInfo(){
+        Thread {
+            val mediaType = "text/plain".toMediaTypeOrNull()
+            val body = RequestBody.create(
+                mediaType,
+                "\"SELECT * FROM stocks WHERE symbol in ('FB', 'AMZN', 'AAPL', 'NFLX', 'GOOG') ORDER BY price_change_percent_1m DESC\""
+            )
+            val request = Request.Builder()
+                .url("https://hotstoks-sql-finance.p.rapidapi.com/query")
+                .post(body)
+                .addHeader("content-type", "text/plain")
+                .addHeader("x-rapidapi-host", "hotstoks-sql-finance.p.rapidapi.com")
+                .addHeader("x-rapidapi-key", "99dd94090emsha0710a563e8e79fp1194bcjsn29b8bb215d6e")
+                .build()
+            val client = OkHttpClient()
+            val response = client.newCall(request).execute()
+            runOnUiThread {
+                Toast.makeText(this, response.body?.string(), Toast.LENGTH_LONG).show()
             }
         }.start()
     }
