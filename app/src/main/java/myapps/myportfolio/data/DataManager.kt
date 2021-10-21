@@ -1,5 +1,7 @@
 package myapps.myportfolio.data
 
+import myapps.myportfolio.network.WebShareMinimal
+
 object DataManager {
     var shares = mutableListOf<Share>()
 
@@ -14,6 +16,16 @@ object DataManager {
         }
         shares.add(share)
 
+        return null
+    }
+
+    fun updateSharePrice(webshare: WebShareMinimal): Share?{
+        for (s in shares){
+            if (s.name == webshare.symbol) {
+                s.price = webshare.price
+                return s
+            }
+        }
         return null
     }
 

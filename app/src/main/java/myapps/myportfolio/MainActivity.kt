@@ -3,7 +3,6 @@ package myapps.myportfolio
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
@@ -14,11 +13,12 @@ import myapps.myportfolio.data.MyDatabase
 import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
 import myapps.myportfolio.network.WebSQLBuilder
-import myapps.myportfolio.network.WebShare
+import myapps.myportfolio.network.WebShareMinimal
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.*
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(),
     AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(),
         binding.tabLayout.visibility = View.GONE
 
         loadDataFromDatabase()
-        loadAssetsList()
+        loadAvailableStocks()
 
         binding.tabLayout.setupWithViewPager(binding.vpSummary)
         binding.vpSummary.adapter = SummaryPagerAdapter(supportFragmentManager)
@@ -41,11 +41,10 @@ class MainActivity : AppCompatActivity(),
         }
         binding.swipeLayout.setOnRefreshListener {
             getStockInfo()
-            binding.swipeLayout.isRefreshing = false
         }
     }
 
-    private fun loadAssetsList(){
+    private fun loadAvailableStocks(){
         Thread {
             val inputStreamReader = InputStreamReader(assets.open("USE_20211014.csv"))
             val bufferedReader = BufferedReader(inputStreamReader)
@@ -88,16 +87,31 @@ class MainActivity : AppCompatActivity(),
                 .addHeader("x-rapidapi-key", "99dd94090emsha0710a563e8e79fp1194bcjsn29b8bb215d6e")
                 .build()
             val client = OkHttpClient()
-            //val response = client.newCall(request).execute()
-            val res = "{\"count\":1,\"results\":[{\"symbol\":\"AMD\",\"price\":\"116.39\"}]}"
-            val gson = Gson()
-            val type = object : TypeToken<MutableList<WebShare>>(){}.type
-            val hmm = JSONObject(res)
-            val parsed: MutableList<WebShare> = gson.fromJson(hmm.getJSONArray("results").toString(), type)
+            val response = client.newCall(request).execute()
+            //val res = "{\"count\":1,\"results\":[{\"symbol\":\"AMD\",\"price\":\"40.11\"}]}"
+            val res = response.body?.string()
+            if (res != null) {
+                val gson = Gson()
+                val type = object : TypeToken<MutableList<WebShareMinimal>>() {}.type
+                val jsonObject = JSONObject(res)
+                val parsed: MutableList<WebShareMinimal> =
+                    gson.fromJson(jsonObject.getJSONArray("results").toString(), type)
+                updateSharePrices(parsed)
+            }
+        }.start()
+    }
 
+    fun updateSharePrices(prices: MutableList<WebShareMinimal>){
+        Thread {
+            for (webshare in prices) {
+                val share = DataManager.updateSharePrice(webshare)
+                share?.let {
+                    MyDatabase.getInstance(this).assetDao().updateShare(it)
+                }
+            }
             runOnUiThread {
-                //val res = response.body?.string()
-                Toast.makeText(this, parsed[0].symbol, Toast.LENGTH_LONG).show()
+                (binding.vpSummary.adapter as SummaryPagerAdapter).notifyDataSetChanged()
+                binding.swipeLayout.isRefreshing = false
             }
         }.start()
     }

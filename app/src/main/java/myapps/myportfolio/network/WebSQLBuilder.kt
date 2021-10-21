@@ -17,7 +17,6 @@ class WebSQLBuilder {
         for (i in 0..shares.size - 2) {
             val currentName = shares[i].name
             shareNames += "'$currentName', "
-            Log.d("websql", "here")
         }
         val currentName = shares[shares.size - 1].name
         shareNames += "'$currentName'"

@@ -1,6 +1,6 @@
 package myapps.myportfolio.network
 
-data class WebShare(
+data class WebShareMinimal(
     val symbol: String,
     val price: Double
 )
