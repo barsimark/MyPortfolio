@@ -1,4 +1,4 @@
-package myapps.myportfolio.database
+package myapps.myportfolio.data
 
 import androidx.room.*
 import myapps.myportfolio.data.Share
