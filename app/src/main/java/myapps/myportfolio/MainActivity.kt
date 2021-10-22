@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStop(){
         val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<PriceUpdateWorker>(1, TimeUnit.HOURS)
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<PriceUpdateWorker>(12, TimeUnit.HOURS)
             .setConstraints(constraints)
             .build()
         WorkManager.getInstance(this).enqueue(periodicWorkRequest)
@@ -100,7 +100,6 @@ class MainActivity : AppCompatActivity(),
                 .build()
             val client = OkHttpClient()
             val response = client.newCall(request).execute()
-            //val res = "{\"count\":1,\"results\":[{\"symbol\":\"AMD\",\"price\":\"40.11\"}]}"
             val res = response.body?.string()
             if (res != null) {
                 val gson = Gson()
