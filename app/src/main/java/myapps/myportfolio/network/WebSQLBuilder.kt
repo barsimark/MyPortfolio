@@ -1,7 +1,7 @@
 package myapps.myportfolio.network
 
-import android.util.Log
 import myapps.myportfolio.data.DataManager
+import myapps.myportfolio.data.Share
 
 class WebSQLBuilder {
     fun SQLNamePriceQuery(): String {
@@ -11,8 +11,19 @@ class WebSQLBuilder {
                 "WHERE symbol in ($ownedShares)\""
     }
 
+    fun SQLNamePriceQuery(shares: List<Share>): String{
+        val ownedShares = BuildShareNames(shares)
+        return "\"SELECT symbol, price " +
+                "FROM stocks " +
+                "WHERE symbol in ($ownedShares)\""
+    }
+
     private fun GetOwnedShareNames(): String{
         val shares = DataManager.shares
+        return BuildShareNames(shares)
+    }
+
+    private fun BuildShareNames(shares: List<Share>): String{
         var shareNames = ""
         for (i in 0..shares.size - 2) {
             val currentName = shares[i].name

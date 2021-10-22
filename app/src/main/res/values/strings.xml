@@ -12,4 +12,7 @@
     <string name="free_cash">Free Cash</string>
     <string name="buy">Buy</string>
     <string name="sell">Sell</string>
+    <string name="price_per_share">Price per share</string>
+    <string name="channel_name">ChannelName</string>
+    <string name="channel_description">ChannelDescription</string>
 </resources>

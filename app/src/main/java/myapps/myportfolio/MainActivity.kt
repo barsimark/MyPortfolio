@@ -3,6 +3,7 @@ package myapps.myportfolio
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.work.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import myapps.myportfolio.adapter.AssetsRecyclerAdapter
@@ -14,11 +15,12 @@ import myapps.myportfolio.databinding.ActivityMainBinding
 import myapps.myportfolio.fragments.AdditemFragment
 import myapps.myportfolio.network.WebSQLBuilder
 import myapps.myportfolio.network.WebShareMinimal
+import myapps.myportfolio.worker.PriceUpdateWorker
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.*
-import kotlin.concurrent.thread
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(),
     AdditemFragment.AssetHandler, AssetsRecyclerAdapter.AssetDeleter {
@@ -40,8 +42,18 @@ class MainActivity : AppCompatActivity(),
             AdditemFragment(assetsStrings).show(supportFragmentManager, "ADD_TAG")
         }
         binding.swipeLayout.setOnRefreshListener {
-            getStockInfo()
+            getStockPrice()
         }
+        WorkManager.getInstance(this).cancelAllWork()
+    }
+
+    override fun onStop(){
+        val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<PriceUpdateWorker>(1, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(this).enqueue(periodicWorkRequest)
+        super.onStop()
     }
 
     private fun loadAvailableStocks(){
@@ -72,7 +84,7 @@ class MainActivity : AppCompatActivity(),
         }.start()
     }
 
-    private fun getStockInfo(){
+    private fun getStockPrice(){
         Thread {
             val mediaType = "text/plain".toMediaTypeOrNull()
             val body = RequestBody.create(
