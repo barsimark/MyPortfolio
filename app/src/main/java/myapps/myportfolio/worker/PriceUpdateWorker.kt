@@ -42,6 +42,8 @@ class PriceUpdateWorker(context: Context, workerParameter: WorkerParameters) :
         val client = OkHttpClient()
         val response = client.newCall(request).execute()
         val res = response.body?.string()
+
+        var textToDisplay = ""
         if (res != null) {
             val gson = Gson()
             val type = object : TypeToken<MutableList<WebShareMinimal>>() {}.type
@@ -52,12 +54,14 @@ class PriceUpdateWorker(context: Context, workerParameter: WorkerParameters) :
             for (parsedShare in parsed){
                 val share = shares.find { it.name == parsedShare.symbol }
                 if (share != null){
+                    textToDisplay += String.format("%s: %.4f%%\n",
+                        share.name, (parsedShare.price / share.price - 1.0) * 100.0)
                     share.price = parsedShare.price
                     MyDatabase.getInstance(applicationContext).assetDao().updateShare(share)
                 }
             }
 
-            sendNotification(res)
+            sendNotification(textToDisplay)
         }
         return Result.success()
     }
